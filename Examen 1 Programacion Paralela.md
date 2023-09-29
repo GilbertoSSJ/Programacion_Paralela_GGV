@@ -3,57 +3,57 @@
 1. ¿Qué es la complejidad temporal de un algoritmo?
    - [ ] El número de instrucciones en un algoritmo.
    - [ ] La cantidad de memoria utilizada por un algoritmo.
-   - [ ] El tiempo que tarda un algoritmo en ejecutarse en función del tamaño de entrada.
+   - [x] El tiempo que tarda un algoritmo en ejecutarse en función del tamaño de entrada.
 
 2. ¿Cuál de las siguientes notaciones se utiliza comúnmente para describir la complejidad temporal de un algoritmo?
    - [ ] Números romanos. $I,II,III$ 
    - [ ] Notación big $\theta$     $\theta(N)$ 
-   - [ ] Notación big $O$      $O(n)$.
+   - [x] Notación big $O$      $O(n)$.
 
 3. ¿Qué significa $O(log n)$  en la notación big O?
-   - [ ] El tiempo de ejecución del algoritmo crece de manera logarítmica con el tamaño de entrada.
+   - [x] El tiempo de ejecución del algoritmo crece de manera logarítmica con el tamaño de entrada.
    - [ ] El tiempo de ejecución del algoritmo es constante.
    - [ ] El tiempo de ejecución del algoritmo crece de manera lineal con el tamaño de entrada.
 
 4. ¿Qué es la programación paralela en informática?
    - [ ] Un tipo de lenguaje de programación.
    - [ ] Un método para ocultar la complejidad de un algoritmo.
-   - [ ] Una técnica que utiliza múltiples hilos o procesadores para resolver un problema de manera simultánea.
+   - [x] Una técnica que utiliza múltiples hilos o procesadores para resolver un problema de manera simultánea.
 
 5. ¿Cuál es uno de los beneficios clave de la programación paralela?
    - [ ] Mayor utilización de recursos de almacenamiento.
-   - [ ] Mayor capacidad de procesamiento y reducción de tiempos de ejecución.
+   - [x] Mayor capacidad de procesamiento y reducción de tiempos de ejecución.
    - [ ] Menor consumo de energía.
 
 6. ¿Qué es CUDA en el contexto de la programación paralela?
    - [ ] Un lenguaje de programación paralela.
-   - [ ] Una plataforma de computación paralela desarrollada por NVIDIA&trade; 
+   - [x] Una plataforma de computación paralela desarrollada por NVIDIA&trade; 
    - [ ] Una técnica de programación secuencial.
 
 7. ¿Cuál es el objetivo principal de CUDA?
    - [ ] Ejecutar algoritmos de manera secuencial.
-   - [ ] Aprovechar el poder de procesamiento de las tarjetas gráficas (GPUs) para cálculos paralelos.
+   - [x] Aprovechar el poder de procesamiento de las tarjetas gráficas (GPUs) para cálculos paralelos.
    - [ ] Optimizar el uso de la memoria RAM.
 
 8. ¿Cuál de las siguientes declaraciones sobre CUDA es cierta?
    - [ ] CUDA solo funciona en sistemas operativos Windows.
-   - [ ] CUDA es una plataforma de programación paralela que permite el desarrollo de aplicaciones para GPUs NVIDIA&trade; . 
+   - [x] CUDA es una plataforma de programación paralela que permite el desarrollo de aplicaciones para GPUs NVIDIA&trade; . 
    - [ ] CUDA se utiliza exclusivamente en aplicaciones de inteligencia artificial.
 
 9. ¿Qué es un "kernel" en el contexto de CUDA?
    - [ ] Un tipo de unidad de procesamiento central (CPU).
    - [ ] Un tipo de tarjeta de video.
-   - [ ] Un pequeño programa o función que se ejecuta en la GPU de manera paralela.
-1. ¿Cuál de las siguientes afirmaciones describe mejor la ventaja de utilizar CUDA en aplicaciones de procesamiento intensivo?
+   - [x] Un pequeño programa o función que se ejecuta en la GPU de manera paralela.
+10. ¿Cuál de las siguientes afirmaciones describe mejor la ventaja de utilizar CUDA en aplicaciones de procesamiento intensivo?
     - [ ] CUDA solo se utiliza para aplicaciones de bajo rendimiento.
     - [ ] CUDA solo es adecuado para aplicaciones de oficina.
-    - [ ] CUDA permite un aumento significativo en el rendimiento al aprovechar la potencia de cálculo de las GPUs.
+    - [x] CUDA permite un aumento significativo en el rendimiento al aprovechar la potencia de cálculo de las GPUs.
 
 ## Calculo de complejidad de un algoritmo
 
 Analiza los siguientes algoritmos y calcula su complejidad en _Big O notation_ 
 
-Algoritmo 1:
+Algoritmo 1:  es O(n^2).
 ```cpp
 #include <iostream>
 
@@ -86,7 +86,7 @@ int main() {
 
 ```
 
-Algoritmo 2:
+Algoritmo 2: es O(n^3).
 
 ```cpp
 #include <iostream>
