@@ -28,4 +28,14 @@ Los grids se utilizan para organizar y coordinar el trabajo en una GPU, especial
 ## Conclusion
 En conclusión, los conceptos de CUDA Core, Thread, Block y Grid son fundamentales para comprender y aprovechar el poder de las GPU en la programación paralela. CUDA Cores son las unidades de procesamiento básicas en una GPU, Threads son las unidades de trabajo individuales, Blocks agrupan hilos para la ejecución eficiente y Grids organizan múltiples bloques para tareas más amplias. Estos conceptos permiten a los desarrolladores diseñar y ejecutar algoritmos altamente paralelos, acelerando significativamente el procesamiento de datos en una variedad de aplicaciones, desde la simulación científica hasta el aprendizaje profundo. Para dominar la programación en CUDA, es esencial comprender cómo estos elementos se relacionan y trabajan juntos para lograr un rendimiento óptimo en las GPU.
 
+## Fuentes y Referencias
+
+https://hardzone.es/marcas/nvidia/nucleos-cuda/
+
+https://hardwaresfera.com/articulos/hablamos-profundidad-los-nvidia-cuda-core/
+
+https://www.youtube.com/watch?v=4vHvmSB-NMQ&ab_channel=Pepelpro
+
+
+
 
