@@ -2,19 +2,30 @@
 
 
 
- # Marco Teórico: Multiplicación de Matrices
-## ¿Qué es una Matriz?
+ # Investigación CUDA Cores, Threads, Blocks and Grids
+## Cuda Core
 Una matriz es una estructura de datos bidimensional compuesta por filas y columnas. Se puede representar matemáticamente como una matriz A con dimensiones m × n, donde m es el número de filas y n es el número de columnas. Cada elemento de la matriz se denomina "entrada" y se identifica mediante su posición en la fila y la columna.
 
-## Multiplicación de Matrices
-La multiplicación de matrices es una operación fundamental en álgebra lineal. Para multiplicar dos matrices, se deben cumplir ciertas reglas de dimensiones. Dadas dos matrices A de dimensiones m × p y B de dimensiones p × n, el resultado de su multiplicación, denotado como C = A * B, será una matriz de dimensiones m × n.
+## Thread
+Un hilo en el contexto de CUDA es una secuencia de instrucciones que se ejecuta en un núcleo CUDA. Los hilos son las unidades más pequeñas de trabajo que se pueden asignar a un núcleo CUDA.
+
+Los hilos son especialmente útiles para dividir tareas en partes más pequeñas y ejecutarlas en paralelo en múltiples núcleos CUDA. Esto permite un procesamiento masivamente paralelo y un rendimiento mejorado.
 
 
-## Aplicación en el Código
-El código proporcionado implementa la multiplicación de matrices en C utilizando dos matrices de ejemplo, Matriz_1 y Matriz_2, ambas de dimensiones 10 × 10. El resultado se almacena en la matriz Resultado.
+## Block
+Un bloque en CUDA es un grupo de hilos que se ejecutan en el mismo multiprocesador de la GPU. Los bloques se utilizan para dividir y organizar el trabajo en grupos más manejables.
 
-Las matrices de ejemplo se inicializan con valores predefinidos en el código.
+Los hilos dentro de un bloque pueden cooperar y compartir datos a través de una memoria compartida local, lo que facilita la comunicación entre los hilos del mismo bloque.
 
-El bucle principal anidado realiza la multiplicación de matrices según la fórmula mencionada. Itera a través de las filas y columnas de las matrices de entrada y suma los productos correspondientes.
 
-El resultado se muestra en la consola, mostrando cada entrada de la matriz resultante.
+## Grid
+Un grid en CUDA es una colección de bloques. Los bloques dentro de un grid pueden ejecutarse en paralelo, pero los bloques en sí pueden no necesariamente ejecutarse al mismo tiempo.
+
+Los grids se utilizan para organizar y coordinar el trabajo en una GPU, especialmente cuando se trabaja con grandes cantidades de datos o tareas complejas que requieren múltiples bloques.
+
+
+
+## Conclusion
+En conclusión, los conceptos de CUDA Core, Thread, Block y Grid son fundamentales para comprender y aprovechar el poder de las GPU en la programación paralela. CUDA Cores son las unidades de procesamiento básicas en una GPU, Threads son las unidades de trabajo individuales, Blocks agrupan hilos para la ejecución eficiente y Grids organizan múltiples bloques para tareas más amplias. Estos conceptos permiten a los desarrolladores diseñar y ejecutar algoritmos altamente paralelos, acelerando significativamente el procesamiento de datos en una variedad de aplicaciones, desde la simulación científica hasta el aprendizaje profundo. Para dominar la programación en CUDA, es esencial comprender cómo estos elementos se relacionan y trabajan juntos para lograr un rendimiento óptimo en las GPU.
+
+
