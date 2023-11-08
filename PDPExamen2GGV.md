@@ -198,3 +198,103 @@ Es una ejecución de código en la que las operaciones de transferencia de dato
                     0.00%     400ns         1     400ns     400ns     400ns  cuDeviceTotalMem
                     0.00%     200ns         1     200ns     200ns     200ns  cuDeviceGetUuid
 ~~~
+
+La optimización de la operación de transposición de una matriz utilizando CUDA se muestra aquí. La transferencia de datos desde la CPU a la GPU CUDA memcpy HtoD, que lleva menos de 2 ms, es la operación más importante en la GPU. La función "copyRow" que se encarga de los cálculos tiene un tiempo de ejecución limitado de solo 150 microsegundos.
+
+
+La asignación de memoria y la transferencia de datos entre dispositivos son las tareas más importantes del procesador. El cudaMemcpy de host a dispositivo, que implica la transferencia de matrices, toma más tiempo debido al volumen de datos. Para asignar memoria adicional a las matrices, el término cudaMalloc se usa dos veces. La función "cudaDeviceReset" es responsable de reiniciar la GPU. La función copyRow copia y traslada una fila. 
+
+
+###   writeSegment
+~~~
+==1127== NVPROF is profiling process 1127, command: ./writeSegment
+==1127== Warning: Unified Memory Profiling is not supported on the current configuration because a pair of devices without peer-to-peer support is detected on this multi-GPU setup. When peer mappings are not available, system falls back to using zero-copy memory. It can cause kernels, which access unified memory, to run slower. More details can be found at: http://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#um-managed-memory
+==1127== Profiling application: ./writeSegment
+==1127== Profiling result:
+            Type  Time(%)      Time     Calls       Avg       Min       Max  Name
+ GPU activities:   65.98%  2.1129ms         3  704.29us  518.98us  921.45us  [CUDA memcpy DtoH]
+                   29.36%  940.23us         2  470.12us  465.19us  475.04us  [CUDA memcpy HtoD]
+                    1.55%  49.504us         1  49.504us  49.504us  49.504us  writeOffset(float*, float*, float*, int, int)
+                    1.49%  47.712us         1  47.712us  47.712us  47.712us  warmup(float*, float*, float*, int, int)
+                    0.91%  29.120us         1  29.120us  29.120us  29.120us  writeOffsetUnroll2(float*, float*, float*, int, int)
+                    0.72%  23.072us         1  23.072us  23.072us  23.072us  writeOffsetUnroll4(float*, float*, float*, int, int)
+      API calls:   92.61%  579.23ms         3  193.08ms  301.40us  578.59ms  cudaMalloc
+                    6.01%  37.576ms         1  37.576ms  37.576ms  37.576ms  cudaDeviceReset
+                    0.83%  5.1802ms         5  1.0360ms  537.40us  2.0100ms  cudaMemcpy
+                    0.34%  2.1550ms         1  2.1550ms  2.1550ms  2.1550ms  cuDeviceGetPCIBusId
+                    0.11%  687.50us         3  229.17us  186.80us  276.10us  cudaFree
+                    0.06%  399.00us         4  99.750us  72.600us  145.30us  cudaDeviceSynchronize
+                    0.04%  225.60us         4  56.400us  20.100us  89.100us  cudaLaunchKernel
+                    0.00%  14.400us       101     142ns     100ns  1.0000us  cuDeviceGetAttribute
+                    0.00%  4.9000us         1  4.9000us  4.9000us  4.9000us  cudaGetDeviceProperties
+                    0.00%  4.1000us         1  4.1000us  4.1000us  4.1000us  cudaSetDevice
+                    0.00%  3.3000us         4     825ns     400ns  1.1000us  cudaGetLastError
+                    0.00%  1.2000us         3     400ns     200ns     800ns  cuDeviceGetCount
+                    0.00%  1.1000us         2     550ns     200ns     900ns  cuDeviceGet
+                    0.00%     700ns         1     700ns     700ns     700ns  cuDeviceGetName
+                    0.00%     300ns         1     300ns     300ns     300ns  cuDeviceTotalMem
+                    0.00%     100ns         1     100ns     100ns     100ns  cuDeviceGetUuid
+~~~
+
+Las transferencias de datos entre el GPU y la memoria principal (HtoD y DtoH) son las tareas más significativas en términos de tiempo de ejecución.
+Varias funciones en el GPU también contribuyen, aunque en menor medida.
+La asignación de memoria en el dispositivo es otra tarea que ocupa tiempo.
+Reiniciar el dispositivo y otras llamadas tienen un impacto menor en el tiempo total.
+Las actividades relacionadas con la configuración y consulta de atributos del dispositivo son rápidas y representan una fracción mínima del tiempo de ejecución.
+
+
+###   memTransfer
+~~~
+==935== NVPROF is profiling process 935, command: ./memTransfer
+==935== Warning: Unified Memory Profiling is not supported on the current configuration because a pair of devices without peer-to-peer support is detected on this multi-GPU setup. When peer mappings are not available, system falls back to using zero-copy memory. It can cause kernels, which access unified memory, to run slower. More details can be found at: http://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#um-managed-memory
+==935== Profiling application: ./memTransfer
+==935== Profiling result:
+            Type  Time(%)      Time     Calls       Avg       Min       Max  Name
+ GPU activities:   52.15%  2.1117ms         1  2.1117ms  2.1117ms  2.1117ms  [CUDA memcpy HtoD]
+                   47.85%  1.9374ms         1  1.9374ms  1.9374ms  1.9374ms  [CUDA memcpy DtoH]
+      API calls:   93.74%  577.35ms         1  577.35ms  577.35ms  577.35ms  cudaMalloc
+                    5.15%  31.729ms         1  31.729ms  31.729ms  31.729ms  cudaDeviceReset
+                    0.71%  4.3856ms         2  2.1928ms  2.1784ms  2.2072ms  cudaMemcpy
+                    0.34%  2.0994ms         1  2.0994ms  2.0994ms  2.0994ms  cuDeviceGetPCIBusId
+                    0.05%  306.30us         1  306.30us  306.30us  306.30us  cudaFree
+                    0.00%  14.700us       101     145ns     100ns  1.0000us  cuDeviceGetAttribute
+                    0.00%  8.0000us         1  8.0000us  8.0000us  8.0000us  cudaSetDevice
+                    0.00%  2.8000us         1  2.8000us  2.8000us  2.8000us  cudaGetDeviceProperties
+                    0.00%  1.4000us         3     466ns     200ns  1.0000us  cuDeviceGetCount
+                    0.00%     900ns         2     450ns     100ns     800ns  cuDeviceGet
+                    0.00%     900ns         1     900ns     900ns     900ns  cuDeviceGetName
+                    0.00%     400ns         1     400ns     400ns     400ns  cuDeviceTotalMem
+                    0.00%     200ns         1     200ns     200ns     200ns  cuDeviceGetUuid
+~~~
+
+La asignación de memoria del dispositivo (cudaMalloc) y las transferencias de datos (cudaMemcpy) son los componentes que requieren más tiempo de ejecución. El primero mueve datos del host al dispositivo y el segundo los mueve en la dirección opuesta. Debido a la gran cantidad de datos involucrados, estas operaciones de transferencia requieren mucho tiempo.
+
+
+###   pinMemTransfer
+~~~
+==947== NVPROF is profiling process 947, command: ./pinMemTransfer
+==947== Warning: Unified Memory Profiling is not supported on the current configuration because a pair of devices without peer-to-peer support is detected on this multi-GPU setup. When peer mappings are not available, system falls back to using zero-copy memory. It can cause kernels, which access unified memory, to run slower. More details can be found at: http://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#um-managed-memory
+==947== Profiling application: ./pinMemTransfer
+==947== Profiling result:
+            Type  Time(%)      Time     Calls       Avg       Min       Max  Name
+ GPU activities:   50.57%  1.3036ms         1  1.3036ms  1.3036ms  1.3036ms  [CUDA memcpy HtoD]
+                   49.43%  1.2743ms         1  1.2743ms  1.2743ms  1.2743ms  [CUDA memcpy DtoH]
+      API calls:   93.65%  564.84ms         1  564.84ms  564.84ms  564.84ms  cudaHostAlloc
+                    5.15%  31.051ms         1  31.051ms  31.051ms  31.051ms  cudaDeviceReset
+                    0.45%  2.7319ms         2  1.3660ms  1.3368ms  1.3951ms  cudaMemcpy
+                    0.34%  2.0604ms         1  2.0604ms  2.0604ms  2.0604ms  cuDeviceGetPCIBusId
+                    0.30%  1.8091ms         1  1.8091ms  1.8091ms  1.8091ms  cudaFreeHost
+                    0.06%  342.90us         1  342.90us  342.90us  342.90us  cudaMalloc
+                    0.04%  261.00us         1  261.00us  261.00us  261.00us  cudaFree
+                    0.00%  15.400us       101     152ns     100ns     900ns  cuDeviceGetAttribute
+                    0.00%  7.2000us         1  7.2000us  7.2000us  7.2000us  cudaSetDevice
+                    0.00%  2.4000us         1  2.4000us  2.4000us  2.4000us  cudaGetDeviceProperties
+                    0.00%  1.0000us         3     333ns     100ns     700ns  cuDeviceGetCount
+                    0.00%  1.0000us         2     500ns     100ns     900ns  cuDeviceGet
+                    0.00%     600ns         1     600ns     600ns     600ns  cuDeviceGetName
+                    0.00%     400ns         1     400ns     400ns     400ns  cuDeviceTotalMem
+                    0.00%     200ns         1     200ns     200ns     200ns  cuDeviceGetUuid
+~~~
+
+El propósito de este código es idéntico al del código anterior, pero la asignación de memoria está fijada en el host.
+Comparado con el método anterior, este método redujo los milisegundos tanto en la GPU como en el procesador. Supongo que esto se debe a que no se necesita asignar memoria en función de la GPU también.
