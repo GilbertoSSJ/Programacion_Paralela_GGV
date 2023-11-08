@@ -65,3 +65,136 @@ En particular, la función "sumArraysZeroCopy" en la GPU realiza los cálculos d
 El código realiza operaciones sencillas con un arreglo de estructuras y se enfoca en tres funciones principales. "cudaMalloc" se utiliza dos veces para asignar memoria en la memoria global. Luego, "cudaMemcpy" se emplea para transferir datos del dispositivo al host, consumiendo la mayor parte del tiempo de ejecución en la GPU, aproximadamente el 80% del tiempo total, con una duración de 23.304 ms. El proceso inverso, que implica copiar datos del host al dispositivo, consume la mayoría del tiempo restante en la GPU, con un tiempo de 5.2 ms.
 
 En el lado del procesador, la asignación de memoria representa la mayor parte del tiempo, alrededor del 88% del tiempo total de ejecución, con un tiempo de 566.38 ms. Las funciones "cudaDeviceReset," que limpian los procesos de la GPU, y "cudaMemcpy," que involucra el intercambio de datos con la GPU, también consumen un tiempo significativo de 35.7 ms y 31.2 ms, respectivamente. El resto de los procesos disminuyen en tiempo de ejecución significativo en comparación con los mencionados anteriormente. En resumen, los intercambios de datos son las operaciones que más tiempo consumen tanto en la GPU como en el procesador.
+
+
+### SimpleMathSoA
+~~~
+==1027== NVPROF is profiling process 1027, command: ./simpleMathSoA
+==1027== Warning: Unified Memory Profiling is not supported on the current configuration because a pair of devices without peer-to-peer support is detected on this multi-GPU setup. When peer mappings are not available, system falls back to using zero-copy memory. It can cause kernels, which access unified memory, to run slower. More details can be found at: http://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#um-managed-memory
+==1027== Profiling application: ./simpleMathSoA
+==1027== Profiling result:
+            Type  Time(%)      Time     Calls       Avg       Min       Max  Name
+ GPU activities:   73.35%  12.215ms         2  6.1076ms  3.7599ms  8.4554ms  [CUDA memcpy DtoH]
+                   23.58%  3.9265ms         1  3.9265ms  3.9265ms  3.9265ms  [CUDA memcpy HtoD]
+                    1.54%  256.42us         1  256.42us  256.42us  256.42us  warmup2(InnerArray*, InnerArray*, int)
+                    1.54%  256.03us         1  256.03us  256.03us  256.03us  testInnerArray(InnerArray*, InnerArray*, int)
+      API calls:   90.98%  584.89ms         2  292.45ms  380.00us  584.51ms  cudaMalloc
+                    5.47%  35.165ms         1  35.165ms  35.165ms  35.165ms  cudaDeviceReset
+                    2.89%  18.564ms         3  6.1881ms  3.9129ms  9.2690ms  cudaMemcpy
+                    0.39%  2.4897ms         1  2.4897ms  2.4897ms  2.4897ms  cuDeviceGetPCIBusId
+                    0.15%  981.80us         2  490.90us  359.80us  622.00us  cudaFree
+                    0.11%  682.20us         2  341.10us  302.90us  379.30us  cudaDeviceSynchronize
+                    0.01%  94.200us         2  47.100us  43.700us  50.500us  cudaLaunchKernel
+                    0.00%  16.500us       101     163ns     100ns  1.4000us  cuDeviceGetAttribute
+                    0.00%  5.9000us         1  5.9000us  5.9000us  5.9000us  cudaSetDevice
+                    0.00%  5.1000us         1  5.1000us  5.1000us  5.1000us  cudaGetDeviceProperties
+                    0.00%  4.7000us         2  2.3500us  2.3000us  2.4000us  cudaGetLastError
+                    0.00%  1.4000us         3     466ns     200ns  1.0000us  cuDeviceGetCount
+                    0.00%  1.2000us         1  1.2000us  1.2000us  1.2000us  cuDeviceGetName
+                    0.00%  1.1000us         2     550ns     100ns  1.0000us  cuDeviceGet
+                    0.00%     300ns         1     300ns     300ns     300ns  cuDeviceTotalMem
+                    0.00%     200ns         1     200ns     200ns     200ns  cuDeviceGetUuid
+~~~
+
+
+Este código realiza operaciones sencillas utilizando estructuras de arreglos. Se enfoca en cuatro funciones principales: "cudaMalloc" para asignar memoria en la GPU, "cudaMemcpy" para transferir datos entre el dispositivo y el host, y "cudaDeviceReset" para reiniciar la GPU. A diferencia del código anterior que usaba "Arrays de Estructuras", este código emplea "Estructuras de Arrays".
+
+En la GPU, la transferencia de datos entre la GPU y el procesador es mucho más rápida en comparación al del código pasado, con tiempos reducidos a casi la mitad
+
+
+
+###   sumMatrixGPUManaged
+~~~
+==1071== NVPROF is profiling process 1071, command: ./sumMatrixGPUManaged
+==1071== Warning: Unified Memory Profiling is not supported on the current configuration because a pair of devices without peer-to-peer support is detected on this multi-GPU setup. When peer mappings are not available, system falls back to using zero-copy memory. It can cause kernels, which access unified memory, to run slower. More details can be found at: http://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#um-managed-memory
+==1071== Profiling application: ./sumMatrixGPUManaged
+==1071== Profiling result:
+            Type  Time(%)      Time     Calls       Avg       Min       Max  Name
+ GPU activities:  100.00%  12.948ms         2  6.4741ms  288.67us  12.660ms  sumMatrixGPU(float*, float*, float*, int, int)
+      API calls:   91.39%  815.38ms         4  203.85ms  27.532ms  731.17ms  cudaMallocManaged
+                    3.45%  30.801ms         1  30.801ms  30.801ms  30.801ms  cudaDeviceReset
+                    3.31%  29.569ms         4  7.3922ms  7.2484ms  7.4490ms  cudaFree
+                    1.52%  13.583ms         1  13.583ms  13.583ms  13.583ms  cudaDeviceSynchronize
+                    0.24%  2.1681ms         1  2.1681ms  2.1681ms  2.1681ms  cuDeviceGetPCIBusId
+                    0.07%  644.20us         2  322.10us  11.200us  633.00us  cudaLaunchKernel
+                    0.00%  14.100us       101     139ns     100ns     900ns  cuDeviceGetAttribute
+                    0.00%  5.8000us         1  5.8000us  5.8000us  5.8000us  cudaSetDevice
+                    0.00%  4.0000us         1  4.0000us  4.0000us  4.0000us  cudaGetDeviceProperties
+                    0.00%  1.2000us         3     400ns     100ns     900ns  cuDeviceGetCount
+                    0.00%  1.1000us         2     550ns     100ns  1.0000us  cuDeviceGet
+                    0.00%     900ns         1     900ns     900ns     900ns  cudaGetLastError
+                    0.00%     700ns         1     700ns     700ns     700ns  cuDeviceGetName
+                    0.00%     300ns         1     300ns     300ns     300ns  cuDeviceTotalMem
+                    0.00%     200ns         1     200ns     200ns     200ns  cuDeviceGetUuid
+~~~
+
+Este Codigo lo que hace  la ejecución de código que utiliza la GPU para realizar operaciones de suma de matrices. El kernel principal se llama sumMatrixGPU y es el núcleo de este código.
+
+
+
+
+El tiempo de ejecución se ve significativamente afectado por las funciones y llamadas de gestión de memoria y control de dispositivo. "cudaMallocManaged" se utiliza para asignar memoria unificada en el dispositivo y la memoria principal, mientras que cudaDeviceReset reinicia el dispositivo. Ambos procesos requieren una gran cantidad de tiempo de ejecución.
+
+
+cudaFree se utiliza para liberar la memoria previamente asignada al dispositivo. "cudaDeviceSynchronize" se utiliza para sincronizar el dispositivo.
+
+###   sumMatrixGPUManual
+~~~
+==1089== NVPROF is profiling process 1089, command: ./sumMatrixGPUManual
+==1089== Warning: Unified Memory Profiling is not supported on the current configuration because a pair of devices without peer-to-peer support is detected on this multi-GPU setup. When peer mappings are not available, system falls back to using zero-copy memory. It can cause kernels, which access unified memory, to run slower. More details can be found at: http://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#um-managed-memory
+==1089== Profiling application: ./sumMatrixGPUManual
+==1089== Profiling result:
+            Type  Time(%)      Time     Calls       Avg       Min       Max  Name
+ GPU activities:   65.52%  27.101ms         2  13.550ms  8.3698ms  18.731ms  [CUDA memcpy HtoD]
+                   30.63%  12.669ms         1  12.669ms  12.669ms  12.669ms  [CUDA memcpy DtoH]
+                    2.69%  1.1118ms         2  555.89us  288.73us  823.04us  sumMatrixGPU(float*, float*, float*, int, int)
+                    1.16%  479.42us         2  239.71us  238.91us  240.51us  [CUDA memset]
+      API calls:   87.57%  607.17ms         3  202.39ms  713.10us  605.72ms  cudaMalloc
+                    6.50%  45.038ms         3  15.013ms  8.6183ms  23.545ms  cudaMemcpy
+                    5.26%  36.474ms         1  36.474ms  36.474ms  36.474ms  cudaDeviceReset
+                    0.33%  2.2576ms         1  2.2576ms  2.2576ms  2.2576ms  cuDeviceGetPCIBusId
+                    0.19%  1.3256ms         3  441.87us  223.90us  799.30us  cudaFree
+                    0.13%  929.30us         1  929.30us  929.30us  929.30us  cudaDeviceSynchronize
+                    0.01%  62.700us         2  31.350us  24.300us  38.400us  cudaMemset
+                    0.01%  62.500us         2  31.250us  28.200us  34.300us  cudaLaunchKernel
+                    0.00%  15.600us       101     154ns     100ns  1.0000us  cuDeviceGetAttribute
+                    0.00%  7.3000us         1  7.3000us  7.3000us  7.3000us  cudaSetDevice
+                    0.00%  7.1000us         1  7.1000us  7.1000us  7.1000us  cudaGetDeviceProperties
+                    0.00%  1.3000us         3     433ns     200ns     900ns  cuDeviceGetCount
+                    0.00%  1.1000us         1  1.1000us  1.1000us  1.1000us  cuDeviceGetName
+                    0.00%  1.0000us         2     500ns     200ns     800ns  cuDeviceGet
+                    0.00%     700ns         1     700ns     700ns     700ns  cudaGetLastError
+                    0.00%     300ns         1     300ns     300ns     300ns  cuDeviceTotalMem
+                    0.00%     200ns         1     200ns     200ns     200ns  cuDeviceGetUuid
+~~~
+
+Es una ejecución de código en la que las operaciones de transferencia de datos entre la CPU y el GPU ocupan la mayor parte del tiempo de ejecución. Luego, el kernel principal, conocido como "sumMatrixGPU", se ejecuta. Aunque en menor medida, otras llamadas y funciones relacionadas con la gestión de memoria y el control del dispositivo también afectan el tiempo de ejecución. En pocas palabras, el código se enfoca en la transferencia de datos entre la CPU y la GPU, así como en los cálculos en la GPU a través del kernel "sumMatrixGPU".
+
+
+###   transpose
+~~~
+==1111== NVPROF is profiling process 1111, command: ./transpose
+==1111== Warning: Unified Memory Profiling is not supported on the current configuration because a pair of devices without peer-to-peer support is detected on this multi-GPU setup. When peer mappings are not available, system falls back to using zero-copy memory. It can cause kernels, which access unified memory, to run slower. More details can be found at: http://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#um-managed-memory
+==1111== Profiling application: ./transpose
+==1111== Profiling result:
+            Type  Time(%)      Time     Calls       Avg       Min       Max  Name
+ GPU activities:   86.82%  1.9853ms         1  1.9853ms  1.9853ms  1.9853ms  [CUDA memcpy HtoD]
+                    6.62%  151.49us         1  151.49us  151.49us  151.49us  copyRow(float*, float*, int, int)
+                    6.56%  150.02us         1  150.02us  150.02us  150.02us  warmup(float*, float*, int, int)
+      API calls:   86.44%  634.10ms         2  317.05ms  434.00us  633.66ms  cudaMalloc
+                   12.79%  93.791ms         1  93.791ms  93.791ms  93.791ms  cudaDeviceReset
+                    0.32%  2.3634ms         1  2.3634ms  2.3634ms  2.3634ms  cudaMemcpy
+                    0.31%  2.2569ms         1  2.2569ms  2.2569ms  2.2569ms  cuDeviceGetPCIBusId
+                    0.07%  549.80us         2  274.90us  222.60us  327.20us  cudaFree
+                    0.06%  404.50us         2  202.25us  166.80us  237.70us  cudaDeviceSynchronize
+                    0.01%  57.000us         2  28.500us  15.400us  41.600us  cudaLaunchKernel
+                    0.00%  16.500us       101     163ns     100ns  1.2000us  cuDeviceGetAttribute
+                    0.00%  5.4000us         1  5.4000us  5.4000us  5.4000us  cudaSetDevice
+                    0.00%  5.0000us         1  5.0000us  5.0000us  5.0000us  cudaGetDeviceProperties
+                    0.00%  1.4000us         3     466ns     100ns  1.1000us  cuDeviceGetCount
+                    0.00%  1.3000us         2     650ns     600ns     700ns  cudaGetLastError
+                    0.00%  1.0000us         2     500ns     200ns     800ns  cuDeviceGet
+                    0.00%     600ns         1     600ns     600ns     600ns  cuDeviceGetName
+                    0.00%     400ns         1     400ns     400ns     400ns  cuDeviceTotalMem
+                    0.00%     200ns         1     200ns     200ns     200ns  cuDeviceGetUuid
+~~~
